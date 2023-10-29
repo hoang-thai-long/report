@@ -13,7 +13,7 @@
                         <filter-option :placeholder="'chọn trường'" class="col" track-by="id" label="name" :data="centers"></filter-option>
                         <filter-option :placeholder="'chọn cấp'" class="col" track-by="id" label="name" :data="levels"></filter-option>
                         <filter-option :placeholder="'chọn lớp'" class="col" track-by="id" label="name" :data="listClass"></filter-option>
-                        <div class="col"><button type="button" class="btn btn-search" v-on:click="applySearch">Tìm kiếm</button></div>
+                        <div class="col-1"><button type="button" class="btn btn-search btn-primary" v-on:click="applySearch">Tìm kiếm</button></div>
                     </div>
                 </div>
             </div>
@@ -31,20 +31,20 @@
                         <th colspan="4">Bài qua link</th>
                     </tr>
                     <tr>
-                        <th>Bài giao</th>
                         <th>Điểm tb</th>
                         <th>Thời gian tb</th>
                         <th>TLTG</th>
+                        <th>SL</th>
 
-                        <th>Bài giao</th>
                         <th>Điểm tb</th>
                         <th>Thời gian tb</th>
                         <th>TLTG</th>
+                        <th>SL</th>
 
-                        <th>Bài giao</th>
                         <th>Điểm tb</th>
                         <th>Thời gian tb</th>
                         <th>TLTG</th>
+                        <th>SL</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,12 +59,19 @@
                             <p style="text-align: left;">Điểm :      {{ totalPoint     (item.id,0) }}</p>
                             <p style="text-align: left;">Thời gian : {{ totalTime      (item.id,0) }}</p>
                         </td>
-                        <td v-if="DataCountCenter != null && DataCountCenter.find(o=>o.id==item.id) != undefined">{{ DataCountCenter.find(o=>o.id==item.id).value }}</td>
-                        <td v-else>---</td>
-                        <td v-if="DataCountClass != null && DataCountClass.find(o=>o.id==item.id) != undefined">{{ DataGiaoBai.filter(o=>o.parent == item.id && o.totalLesson > 0).length }} /{{ DataCountClass.find(o=>o.id==item.id).value }}</td>
-                        <td v-else>---</td>
-                        <td v-if="DataCountStudents != null && DataCountStudents.find(o=>o.id==item.id) != undefined">{{ DataCountStudents.find(o=>o.id==item.id).value }}</td>
-                        <td v-else>---</td>
+                        <td>{{ totalPoint     (item.id,0) }}</td>
+                        <td>{{ totalTime      (item.id,0) }}</td>
+                        <td>{{ totalStudentActive(item.id,0) }}/{{ totalStudent   (item.id,0) }}</td>
+                        <td>{{ totalLesson    (item.id,0) }}</td>
+                        
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                     </tr>
                 </tbody>
