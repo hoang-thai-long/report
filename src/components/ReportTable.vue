@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="filter">
             <div class="filter-box">
-                {{ start?.year }} - {{ end?.month }}
+                <!-- {{ DataGiaoBai }} -->
                 <div class="filter-item">
                     <filter-date @change-value="changeFilterDate"></filter-date>
                 </div>
@@ -25,17 +25,12 @@
                     <tr>
                         <th rowspan="2">STT</th>
                         <th rowspan="2">Tên</th>
-                        <th colspan="4">Tổng hợp</th>
+                        <th rowspan="2">Tổng hợp</th>
                         <th colspan="4">Bài giao</th>
                         <th colspan="4">Bài tự luyện</th>
                         <th colspan="4">Bài qua link</th>
                     </tr>
                     <tr>
-                        <th>Trường</th>
-                        <th>Lớp</th>
-                        <th>học sinh</th>
-                        <th>TLTG</th>
-
                         <th>Bài giao</th>
                         <th>Điểm tb</th>
                         <th>Thời gian tb</th>
@@ -56,12 +51,20 @@
                     <tr v-for="(item,i) in regions" :key="i">
                         <td>{{ (i+1) }}</td>
                         <td style="text-align: left; width: 250px; text-overflow: ellipsis;">{{ item.name }}</td>
+                        <td>
+                            <p style="text-align: left;">Trường :    {{ '' }}/{{ totalSchool    (item.id,0) }}</p>
+                            <p style="text-align: left;">Lớp :       {{ totalClassActive(item.id,0) }}/{{ totalClass     (item.id,0) }}</p>
+                            <p style="text-align: left;">Học sinh :  {{ totalStudentActive(item.id,0) }}/{{ totalStudent   (item.id,0) }}</p>
+                            <p style="text-align: left;">Bài giao :  {{ totalLesson    (item.id,0) }}</p>
+                            <p style="text-align: left;">Điểm :      {{ totalPoint     (item.id,0) }}</p>
+                            <p style="text-align: left;">Thời gian : {{ totalTime      (item.id,0) }}</p>
+                        </td>
                         <td v-if="DataCountCenter != null && DataCountCenter.find(o=>o.id==item.id) != undefined">{{ DataCountCenter.find(o=>o.id==item.id).value }}</td>
-                        <td v-else v-html="countCenters(item.id)"></td>
-                        <td v-if="DataCountClass != null && DataCountClass.find(o=>o.id==item.id) != undefined">{{ DataCountClass.find(o=>o.id==item.id).value }}</td>
-                        <td v-else v-html="countClass(item.id,0)"></td>
+                        <td v-else>---</td>
+                        <td v-if="DataCountClass != null && DataCountClass.find(o=>o.id==item.id) != undefined">{{ DataGiaoBai.filter(o=>o.parent == item.id && o.totalLesson > 0).length }} /{{ DataCountClass.find(o=>o.id==item.id).value }}</td>
+                        <td v-else>---</td>
                         <td v-if="DataCountStudents != null && DataCountStudents.find(o=>o.id==item.id) != undefined">{{ DataCountStudents.find(o=>o.id==item.id).value }}</td>
-                        <td v-else v-html="countStudents(item.id,0)"></td>
+                        <td v-else>---</td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -87,6 +90,7 @@ export default defineComponent({
     },
     data(){
         return {
+            DataGiaoBai:[],
             ListClassData:[],
             DataCountStudents:[],
             DataLoadDing:{
@@ -111,6 +115,72 @@ export default defineComponent({
         }
     },
     methods:{
+        onlyUnique(value, index, array) {
+            return array.indexOf(value) === index;
+        },
+        totalStudentActive(id,type){
+            console.log(type);
+            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0 && o.tyLeThamGia.length > 0);
+            if(data != null){
+                var studentids = [];
+                data.forEach(item=>{
+                    studentids = [].concat(studentids,item.studentDo)
+                })
+                if(studentids.length > 0){
+                    return studentids.length;
+                }
+            }
+            
+            return 0;
+        },
+        totalClassActive(id,type){
+            console.log(type);
+            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
+            if(data) return data.length
+
+            return 0;
+        },
+        totalSchool    (id,type){
+            console.log(type);
+            var item = this.DataCountCenter.find(o=>o.id==id);
+            if(item) return item.value;
+            return 0;
+        },
+        totalClass     (id,type){
+            console.log(type);
+            var item = this.DataCountClass.find(o=>o.id==id);
+            if(item) return item.value;
+            return 0;
+        },
+        totalStudent   (id,type){
+            console.log(type);
+            var item = this.DataCountStudents.find(o=>o.id==id);
+            if(item) return item.value;
+        },
+        totalLesson    (id,type){
+            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0 && o.tyLeThamGia.length > 0);
+            if(data && data.length > 0){
+                return data.map(o=>o.tyLeThamGia.length).reduce((a,b)=>a+b,0);
+            }
+            console.log(id,type);
+            return 0;
+        },
+        totalPoint     (id,type){
+            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
+            if(data != null && data.length > 0){
+                return (data.map(o=>o.ktPoints).reduce((a,b)=>a+b,0)/data.length).toFixed(1)+"/"+(data.map(o=>o.ltPoints).reduce((a,b)=>a+b,0)/data.length).toFixed(1)
+            }
+            console.log(id,type);
+            return 0;
+        },
+        totalTime      (id,type){
+            console.log(id,type);
+            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
+            if(data != null && data.length > 0){
+                return (data.map(o=>o.ktTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1)+"/"+(data.map(o=>o.ltTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1)
+            }
+            return 0;
+        },
         applySearch(){
             const that = this;
             if(this.filter.class){
@@ -127,11 +197,28 @@ export default defineComponent({
                         console.log("filter - region")
                     }
                     else{
-                        if(this.ListClassData.length > 0){
-                            this.ListClassData.forEach(o=>{
-                                that.loadDataByClass(o.l,o.id,o.type,0);
-                            });
+                        this.DataCountStudents = [];
+                        this.DataCountCenter = [];
+                        this.DataCountClass = [];
+                        this.DataLoadDing = {
+                            Center:[],
+                            Class:[],
+                            Student:[]
                         }
+                        this.DataGiaoBai = [];
+                        console.log("run");
+                        const data = [].concat([],this.regions);
+                        console.log(data);
+                        data.forEach(o=>{
+                            that.countCenters(o.id,0)
+                            that.countClass(o.id,0)
+                            that.countStudents(o.id,0)
+                        });
+                        // if(this.ListClassData.length > 0){
+                        //     this.ListClassData.forEach(o=>{
+                        //         that.loadDataByClass(o.l,o.id,o.type,0);
+                        //     });
+                        // }
                     }
                 }
             }
@@ -164,7 +251,7 @@ export default defineComponent({
             else{
                 if(this.DataLoadDing.Center.find(o=>o.id == id) != undefined) return '<div> đang load </div>';
                 this.DataLoadDing.Center.push({id:id});
-                var result = Helper.countCenters(id);
+                var result = Helper.countCenters(id,this.start,this.end);
                 result.then(res=>{
                     that.DataCountCenter.push({id:id,value:res.data});
                     that.DataLoadDing.Center.splice(that.DataLoadDing.Class.findIndex(o=>o.id == id),1);
@@ -179,7 +266,7 @@ export default defineComponent({
             else{
                 if(this.DataLoadDing.Class.find(o=>o.id == id && o.type == type) != undefined) return '<div> đang load </div>';
                 this.DataLoadDing.Class.push({id:id,type:type});
-                var result = Helper.countClass(id,type);
+                var result = Helper.countClass(id,type,this.start,this.end);
                 result.then(res=>{
                     that.DataCountClass.push({id:id,value:res.data.n});
                     that.DataLoadDing.Class.splice(that.DataLoadDing.Class.findIndex(o=>o.id == id && o.type == type),1);
@@ -194,7 +281,7 @@ export default defineComponent({
             if(listClass != null && listClass.length > 0 && i < listClass.length)
             {
                 that.loadBaiGiao(listClass[i],id,type)
-                .then(res=>{ console.log(res);})
+                .then(res=>{ that.DataGiaoBai.push(res.data);})
                 .catch(err=>{console.log(err);})
                 .finally(()=>{
                     if(i < listClass.length){
@@ -202,20 +289,9 @@ export default defineComponent({
                         return that.loadDataByClass(listClass,id,type,i);
                     }
                 })
-                // const that = this;
-                // const count = listClass.length;
-                // for(let i =0; i < count; i++){
-                //     var classid = listClass[i];
-                //     setTimeout(()=>{
-                //         that.loadBaiGiao(classid,id,type);
-                //         that.loadTuLuyen(classid,id,type);
-                //         that.loadLink(classid,id,type);
-                //     },3000)
-                // }
             }
         },
         loadBaiGiao : function(classid,id,type){
-            console.log(classid,id,type);
             return Helper.GetBaiGiao(classid,id,type,this.start,this.end);
         },
         loadTuLuyen : function(classid,id,type){
@@ -230,7 +306,7 @@ export default defineComponent({
             else{
                 if(this.DataLoadDing.Student.find(o=>o.id == id && o.type == type) != undefined) return '<div> đang load </div>';
                 this.DataLoadDing.Student.push({id:id,type:type});
-                var result = Helper.countStudents(id,type);
+                var result = Helper.countStudents(id,type,this.start,this.end);
                 result.then(res=>{
                     that.DataCountStudents.push({id:id,value:res.data});
                     that.DataLoadDing.Student.splice(that.DataLoadDing.Student.findIndex(o=>o.id == id && o.type == type),1);
@@ -239,7 +315,7 @@ export default defineComponent({
             }
         },
         changeFilterDate : function(date){
-            if(date && date.length > 1){
+            if(date && date.length > 1 && date[0] && date[1]){
                 this.start = date[0].getFullYear()+"-"+(date[0].getMonth()+1)+"-"+date[0].getDate();
                 this.end = date[1].getFullYear()+"-"+(date[1].getMonth()+1)+"-"+date[1].getDate();
             }
