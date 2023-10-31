@@ -2,7 +2,6 @@
     <div class="container-fluid">
         <div class="filter">
             <div class="filter-box">
-                <!-- {{ DataGiaoBai }} -->
                 <div class="filter-item">
                     <filter-date @change-value="changeFilterDate"></filter-date>
                 </div>
@@ -10,10 +9,10 @@
                 <div class="filter-item">
                     <div class="row">
                         <filter-option @change-value="changeFilterRegion" :placeholder="'chọn khu vực'" class="col" track-by="id" label="name" :data="regions"></filter-option>
-                        <filter-option :placeholder="'chọn trường'" class="col" track-by="id" label="name" :data="centers"></filter-option>
+                        <filter-option @change-value="changeFilterCenter" :placeholder="'chọn trường'" class="col" track-by="id" label="name" :data="centers"></filter-option>
                         <filter-option :placeholder="'chọn cấp'" class="col" track-by="id" label="name" :data="levels"></filter-option>
                         <filter-option :placeholder="'chọn lớp'" class="col" track-by="id" label="name" :data="listClass"></filter-option>
-                        <div class="col-1"><button type="button" class="btn btn-search btn-primary" v-on:click="applySearch">Tìm kiếm</button></div>
+                        <div class="col-1"><button type="button" class="btn btn-search btn-primary" v-on:click="applySearch">Xem báo cáo</button></div>
                     </div>
                 </div>
             </div>
@@ -25,59 +24,67 @@
                     <tr>
                         <th rowspan="2">STT</th>
                         <th rowspan="2">Tên</th>
-                        <th rowspan="2">Tổng hợp</th>
-                        <th colspan="4">Bài giao</th>
-                        <th colspan="4">Bài tự luyện</th>
+                        <th colspan="4">Tổng hợp</th>
+                        <th colspan="4">Bài kiểm tra</th>
+                        <th colspan="4">Bài luyện tập</th>
                         <th colspan="4">Bài qua link</th>
                     </tr>
                     <tr>
-                        <th>Điểm tb</th>
-                        <th>Thời gian tb</th>
+                        <th>Điểm</th>
+                        <th>Thời gian</th>
                         <th>TLTG</th>
                         <th>SL</th>
 
-                        <th>Điểm tb</th>
-                        <th>Thời gian tb</th>
+                        <th>Điểm</th>
+                        <th>Thời gian</th>
                         <th>TLTG</th>
                         <th>SL</th>
 
-                        <th>Điểm tb</th>
-                        <th>Thời gian tb</th>
+                        <th>Điểm</th>
+                        <th>Thời gian</th>
+                        <th>TLTG</th>
+                        <th>SL</th>
+
+                        <th>Điểm</th>
+                        <th>Thời gian</th>
                         <th>TLTG</th>
                         <th>SL</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item,i) in regions" :key="i">
+                    <tr v-for="(item,i) in DataShow" :key="i" v-on:click="getDetails(item.id,0)">
                         <td>{{ (i+1) }}</td>
                         <td style="text-align: left; width: 250px; text-overflow: ellipsis;">{{ item.name }}</td>
+                        <td>{{ totalPoint(item.id,0,3) }}</td>
+                        <td>{{ totalTime(item.id,0,3) }}</td>
                         <td>
-                            <p style="text-align: left;">Trường :    {{ '' }}/{{ totalSchool    (item.id,0) }}</p>
-                            <p style="text-align: left;">Lớp :       {{ totalClassActive(item.id,0) }}/{{ totalClass     (item.id,0) }}</p>
-                            <p style="text-align: left;">Học sinh :  {{ totalStudentActive(item.id,0) }}/{{ totalStudent   (item.id,0) }}</p>
-                            <p style="text-align: left;">Bài giao :  {{ totalLesson    (item.id,0) }}</p>
-                            <p style="text-align: left;">Điểm :      {{ totalPoint     (item.id,0) }}</p>
-                            <p style="text-align: left;">Thời gian : {{ totalTime      (item.id,0) }}</p>
+                            <p style="text-align: left;">Trường :    {{ totalSchool(item.id,0) }}</p>
+                            <p style="text-align: left;">Lớp :       {{ totalClassActive(item.id,0,3) }}/{{ totalClass(item.id,0) }}</p>
+                            <p style="text-align: left;">Học sinh :  {{ totalStudentActive(item.id,0) }}/{{ totalStudent(item.id,0) }}</p>
                         </td>
-                        <td>{{ totalPoint     (item.id,0) }}</td>
-                        <td>{{ totalTime      (item.id,0) }}</td>
-                        <td>{{ totalStudentActive(item.id,0) }}/{{ totalStudent   (item.id,0) }}</td>
-                        <td>{{ totalLesson    (item.id,0) }}</td>
-                        
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ totalLesson(item.id,0,3) }}</td>
 
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ totalPoint(item.id,0,0) }}</td>
+                        <td>{{ totalTime(item.id,0,0) }}</td>
+                        <td>{{ totalStudentActive(item.id,0,0) }}/{{ totalStudent   (item.id,0) }}</td>
+                        <td>{{ totalLesson(item.id,0,0) }}</td>
+                        
+                        <td>{{ totalPoint(item.id,0,1) }}</td>
+                        <td>{{ totalTime(item.id,0,1) }}</td>
+                        <td>{{ totalStudentActive(item.id,0,1) }}/{{ totalStudent   (item.id,0) }} </td>
+                        <td>{{ totalLesson(item.id,0,1)  }}</td>
+
+                        <td>{{ totalPointLink(item.id) }}</td>
+                        <td>{{ totalTimeLink (item.id) }}</td>
+                        <td>{{ totalStudentLinkActive(item.id) }}/{{ totalStudentLink(item.id) }} </td>
+                        <td>{{ totalLink(item.id) }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <!-- <modal name="modal-view-details">view-details</modal> -->
     </div>
+    
 </template>
 <script>
 import { defineComponent } from 'vue'
@@ -90,13 +97,11 @@ export default defineComponent({
     mounted(){
         this.loadRegions();
     },
-    watch:{
-        "end":function(o,v){
-            console.log(o,v);
-        }
-    },
     data(){
         return {
+            DataShow:[],
+            DataLink:[],
+            DataTuLuyen:[],
             DataGiaoBai:[],
             ListClassData:[],
             DataCountStudents:[],
@@ -118,24 +123,66 @@ export default defineComponent({
             regions:[],
             centers:[],
             listClass:[],
-            levels:[]
+            levels:[],
+            students:[]
         }
     },
     methods:{
+        totalPointLink(id){
+            var data = this.DataLink.find(o=>o.regionid == id);
+            if(data && data.data){
+                return data.data.points.toFixed(1);
+            }
+            return "---";
+        },
+        totalTimeLink(id){
+            var data = this.DataLink.find(o=>o.regionid == id);
+            if(data && data.data){
+                return data.data.times.toFixed(1);
+            }
+            return "---";
+        },
+        totalStudentLinkActive(id){
+            var data = this.DataLink.find(o=>o.regionid == id);
+            if(data && data.data){
+                return data.data.studentDo;
+            }
+            return "---";
+        },
+        totalStudentLink(id){
+            var data = this.DataLink.find(o=>o.regionid == id);
+            if(data && data.data){
+                return data.totalStudents;
+            }
+            return "---";
+        },
+        totalLink(id){
+            var data = this.DataLink.find(o=>o.regionid == id);
+            if(data && data.data){
+                return data.data.totalLink;
+            }
+            return "---";
+        },
+        getDetails(id,type){
+            console.log(id,type);
+            this.$modal.show("modal-view-details");
+        },
         onlyUnique(value, index, array) {
             return array.indexOf(value) === index;
         },
-        totalStudentActive(id,type){
+        totalStudentActive(id,type,template){
             console.log(type);
             var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0 && o.tyLeThamGia.length > 0);
             if(data != null){
-                var studentids = [];
+                var studentKT = [];
+                var studentLT = [];
                 data.forEach(item=>{
-                    studentids = [].concat(studentids,item.studentDo)
+                    studentKT = [].concat(studentKT,item.studentDoKt)
+                    studentLT = [].concat(studentLT,item.studentDoLt)
                 })
-                if(studentids.length > 0){
-                    return studentids.length;
-                }
+                if(template == 0) return studentKT.length;
+                if(template == 1) return studentLT.length;
+                return  [].concat(studentKT,studentLT).length;
             }
             
             return 0;
@@ -164,27 +211,45 @@ export default defineComponent({
             var item = this.DataCountStudents.find(o=>o.id==id);
             if(item) return item.value;
         },
-        totalLesson    (id,type){
-            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0 && o.tyLeThamGia.length > 0);
+        totalLesson(id,type,template){
+            var data = this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
             if(data && data.length > 0){
-                return data.map(o=>o.tyLeThamGia.length).reduce((a,b)=>a+b,0);
+                
+                if(template == 0){
+                    var kt = data.map(o=>o.totalKT).reduce((a,b)=>a+b,0);
+                    return kt;
+                } 
+                if(template == 1) {
+                    var lt = data.map(o=>o.totalLT).reduce((a,b)=>a+b,0);
+                    return lt;
+                }
+                var tt = data.map(o=>o.totalLesson).reduce((a,b)=>a+b,0);
+                return tt;
             }
             console.log(id,type);
             return 0;
         },
-        totalPoint     (id,type){
+        totalPoint(id,type,template){
             var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
             if(data != null && data.length > 0){
-                return (data.map(o=>o.ktPoints).reduce((a,b)=>a+b,0)/data.length).toFixed(1)+"/"+(data.map(o=>o.ltPoints).reduce((a,b)=>a+b,0)/data.length).toFixed(1)
+                var ktpoints = (data.map(o=>o.ktPoints).reduce((a,b)=>a+b,0)/data.length).toFixed(1);
+                if(template == 0) return ktpoints;
+                var ltPoints = (data.map(o=>o.ltPoints).reduce((a,b)=>a+b,0)/data.length).toFixed(1);
+                if(template == 1) return ltPoints;
+                return ktpoints+"/"+ltPoints;
             }
             console.log(id,type);
-            return 0;
+            return "--/--";
         },
-        totalTime      (id,type){
+        totalTime(id,type,template){
             console.log(id,type);
             var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
             if(data != null && data.length > 0){
-                return (data.map(o=>o.ktTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1)+"/"+(data.map(o=>o.ltTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1)
+                var kt = (data.map(o=>o.ktTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1);
+                if(template == 0) return kt;
+                var lt = (data.map(o=>o.ltTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1);
+                if(template == 1) return lt;
+                return kt+"/"+lt;
             }
             return 0;
         },
@@ -192,18 +257,39 @@ export default defineComponent({
             const that = this;
             if(this.filter.class){
                 console.log("filter - class")
+                this.DataShow = this.students;
             }
             else{
                 
                 if(this.filter.center){
-                    console.log("filter - center")
+                    this.ListClassData = [];
+                    this.DataCountClass = [];
+                    this.DataCountStudents = [];
+                    that.DataShow = this.listClass;
+                        const data = [].concat([],this.listClass);
+                        data.forEach(o=>{
+                            that.countStudents(o.id,2);
+                            that.loadLinkWithCenter(o.id);
+                        });
                 }
                 else{
                     if(this.filter.region)
                     {
                         console.log("filter - region")
+                        this.ListClassData = [];
+                        this.DataCountClass = [];
+                        this.DataCountStudents = [];
+
+                        that.DataShow = this.centers;
+                        const data = [].concat([],this.centers);
+                        data.forEach(o=>{
+                            that.countClass(o.id,1);
+                            that.countStudents(o.id,1);
+                            that.loadLinkWithCenter(o.id);
+                        });
                     }
                     else{
+                        that.DataShow = this.regions;
                         this.DataCountStudents = [];
                         this.DataCountCenter = [];
                         this.DataCountClass = [];
@@ -213,22 +299,19 @@ export default defineComponent({
                             Student:[]
                         }
                         this.DataGiaoBai = [];
-                        console.log("run");
                         const data = [].concat([],this.regions);
-                        console.log(data);
                         data.forEach(o=>{
                             that.countCenters(o.id,0)
                             that.countClass(o.id,0)
                             that.countStudents(o.id,0)
+                            that.loadLinkWithClass(o.id);
                         });
-                        // if(this.ListClassData.length > 0){
-                        //     this.ListClassData.forEach(o=>{
-                        //         that.loadDataByClass(o.l,o.id,o.type,0);
-                        //     });
-                        // }
                     }
                 }
             }
+        },
+        loadLinkWithCenter(centerid){
+            console.log(centerid);
         },
         loadRegions(){
             const that = this;
@@ -236,17 +319,33 @@ export default defineComponent({
                 that.regions = res.data;
             })
         },
+        changeFilterCenter : function(value){
+            if(value != this.filter.center){
+                this.filter.center = value;
+            }
+            if(value){
+                const that = this;
+                Helper.loadClass(value.id).then(res=>{
+                    that.listClass = res.data;
+                })
+            }else{
+                this.filter.center = null;
+                this.filter.class = null;
+            }
+        },
         changeFilterRegion : function(value){
-            if(value != this.filter.regions){
+            if(value != this.filter.region){
                 this.filter.region = value;
             }
             if(value){
                 const that = this;
                 Helper.loadCenters(value.id).then(res=>{
                     that.centers = res.data;
+                    
                 })
             }
             else{
+                // this.DataShow = [].concat([],this.regions); 
                 this.filter.center = null;
                 this.filter.level = null;
                 this.filter.class = null;
@@ -278,12 +377,19 @@ export default defineComponent({
                     that.DataCountClass.push({id:id,value:res.data.n});
                     that.DataLoadDing.Class.splice(that.DataLoadDing.Class.findIndex(o=>o.id == id && o.type == type),1);
                     that.ListClassData.push({id:id,type:type,l:res.data.l});
-                    that.loadDataByClass(res.data.l,id,type,0);
+                    that.loadBaiGiaoWithClass(res.data.l,id,type,0);
                 })
                 return '<div>...</div>'
             }
         },
-        loadDataByClass : function(listClass,id,type,i){
+        loadLinkWithClass : function(id){
+            const that = this;
+            that.loadLink(id)
+                .then(res=>{ that.DataLink.push(res.data);})
+                .catch(err=>{console.log(err);})
+        },
+
+        loadBaiGiaoWithClass : function(listClass,id,type,i){
             const that = this;
             if(listClass != null && listClass.length > 0 && i < listClass.length)
             {
@@ -293,19 +399,16 @@ export default defineComponent({
                 .finally(()=>{
                     if(i < listClass.length){
                         i++;
-                        return that.loadDataByClass(listClass,id,type,i);
+                        return that.loadBaiGiaoWithClass(listClass,id,type,i);
                     }
-                })
+                });
             }
         },
         loadBaiGiao : function(classid,id,type){
             return Helper.GetBaiGiao(classid,id,type,this.start,this.end);
         },
-        loadTuLuyen : function(classid,id,type){
-            console.log(classid,id,type);
-        },
-        loadLink : function(classid,id,type){
-            console.log(classid,id,type);
+        loadLink : function(id){
+            return Helper.GetLink(id,this.start,this.end,this.filter.level);
         },
         countStudents : function(id,type){
             const that = this;

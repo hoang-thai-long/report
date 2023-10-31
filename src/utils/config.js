@@ -1,5 +1,5 @@
 const Configs = {
-    BaseUrl:'https://localhost:56456/data/',
+    BaseUrl: 'https://localhost:7201/data/',
     URL:{
         Region:'GetRegions',
         Center:'GetCenters',
@@ -7,7 +7,9 @@ const Configs = {
         CountCenter:'CountCenters',
         CountClass:'CountClass',
         CountStudents:'CountStudents',
-        BaiGiao:'BaiGiao'
+        BaiGiao:'BaiGiao',
+        BaiLink:'BaiLink',
+        TuLuyen:'BaiTuLuyen'
     }
 } 
 export default Configs;
