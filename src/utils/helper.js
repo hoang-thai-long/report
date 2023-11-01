@@ -10,6 +10,11 @@ const loadCenters = function(regionid){
 const loadClass = function(centerid){
     return instance.get(Configs.URL.Class+"?centerid="+centerid);
 }
+
+const loadStudents = function(id){
+    return instance.get(Configs.URL.Student+"?id="+id);
+}
+
 const countCenters = function(regionid,start,end){
     return instance.get(Configs.URL.CountCenter+"?regionid="+regionid+"&start="+start+"&end="+end);
 }
@@ -32,6 +37,7 @@ const GetTuLuyen = function(classid,id,type,start,end){
     return instance.get(Configs.URL.TuLuyen+"?classid="+classid+"&id="+id+"&type="+type+"&start="+start+"&end="+end);
 }
 const Helper = {
+    loadStudents,
     loadRegions,
     loadCenters,
     loadClass,

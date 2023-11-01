@@ -1,6 +1,7 @@
 const Configs = {
     BaseUrl: 'https://localhost:7201/data/',
     URL:{
+        Student:'GetStudent',
         Region:'GetRegions',
         Center:'GetCenters',
         Class :'GetClass',
