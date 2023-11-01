@@ -139,12 +139,12 @@ export default defineComponent({
            var data = this.DataGiaoBai.find(o=>o.parent == id);
            console.log(data, id, type, this.DataGiaoBai);
            if(data != null){
-               var x = type == 1 ? data.tyLeThamGia.filter(o=>o.templateType == 1 && o.points.length > 0) : data.tyLeThamGia.filter(o=>o.templateType != 1 && o.points.length > 0);
-               if(x != null){
-                    return x.length+"/"+ type == 1 ? data.totalLT  : data.totalKT
-               }
+            var res = type == 0 ? data.tyLeThamGia.filter(o=>o.templateType != 1 && o.points.length > 0) : data.tyLeThamGia.filter(o=>o.templateType == 1 && o.points.length > 0);
+            if(res != null){
+                return res.length;
+            }
            }
-           return "--/--";
+           return "--";
         },
         tyleLamBaiLink(id){
             console.log(id);
