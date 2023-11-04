@@ -27,11 +27,11 @@ const countStudents = function(id,type,start,end){
 const GetBaiGiao = function(classid,id,type,start,end){
     return instance.get(Configs.URL.BaiGiao+"?classid="+classid+"&id="+id+"&type="+type+"&start="+start+"&end="+end);
 }
-const GetLink = function(id,start,end,level){
+const GetLink = function(id,type,start,end,level){
     if(level == "null" || level == null){
         level="";
     }
-    return instance.get(Configs.URL.BaiLink+"?id="+id+"&start="+start+"&end="+end+"&level="+level);
+    return instance.get(Configs.URL.BaiLink+"?id="+id+"&type="+type+"&start="+start+"&end="+end+"&level="+level);
 }
 const GetTuLuyen = function(classid,id,type,start,end){
     return instance.get(Configs.URL.TuLuyen+"?classid="+classid+"&id="+id+"&type="+type+"&start="+start+"&end="+end);

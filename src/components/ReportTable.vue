@@ -59,8 +59,8 @@
                         <td>{{ totalPoint(item.id,0,3) }}</td>
                         <td>{{ totalTime(item.id,0,3) }}</td>
                         <td v-if="filter.class == null">
-                            <p style="text-align: left;">Trường :    {{ totalSchool(item.id,0) }}</p>
-                            <p style="text-align: left;">Lớp :       {{ totalClassActive(item.id,0,3) }}/{{ totalClass(item.id,0) }}</p>
+                            <p v-if="filter.region == null" style="text-align: left;">Trường :    {{ totalSchool(item.id) }}</p>
+                            <p v-if="filter.center == null" style="text-align: left;">Lớp :       {{ totalClassActive(item.id) }}/{{ totalClass(item.id) }}</p>
                             <p style="text-align: left;">Học sinh :  {{ totalStudentActive(item.id,0) }}/{{ totalStudent(item.id,0) }}</p>
                         </td>
                         <td>{{ totalLesson(item.id,0,3) }}</td>
@@ -137,7 +137,7 @@ export default defineComponent({
     methods:{
         tyleLamBai(id,type){
            var data = this.DataGiaoBai.find(o=>o.parent == id);
-           console.log(data, id, type, this.DataGiaoBai);
+        //    console.log(data, id, type, this.DataGiaoBai);
            if(data != null){
             var res = type == 0 ? data.tyLeThamGia.filter(o=>o.templateType != 1 && o.points.length > 0) : data.tyLeThamGia.filter(o=>o.templateType == 1 && o.points.length > 0);
             if(res != null){
@@ -147,38 +147,161 @@ export default defineComponent({
            return "--";
         },
         tyleLamBaiLink(id){
-            console.log(id);
+            var data = this.DataLink.find(o=>o.id == id);
+
+            if(this.filter.class){
+                data = this.DataLink.find(o=>o.id == this.filter.class.id);
+                // xử lý nội bộ
+                if(data && data.data){
+                    var students = data.data.find(o=>o.id == id);
+                    if(students && students.data && students.data.length > 0){
+                        var complete = students.data.filter(o=>o.status > -1);
+                        // var koLam = students.data.filter(o=>o.start == -1); 
+                        if(complete && complete.length > 0){
+                            return complete.length;
+                        }
+                        else{
+                            return 0;
+                        }
+                    }
+                    return "---";
+
+                    // return data.pointAvg.toFixed(1);
+                }
+                else return "---";
+            }
+            if(this.filter.center){
+                if(data){
+                    return data.studentDo +"/"+data.totalStudents;
+                }
+                else return "---";
+            }
+
+            if(data && data.data){
+                return data.data.studentDo +"/"+data.totalStudents;
+            }
+            return "---";
         },
         totalPointLink(id){
-            var data = this.DataLink.find(o=>o.regionid == id);
+            var data = this.DataLink.find(o=>o.id == id);
+
+            if(this.filter.class){
+                data = this.DataLink.find(o=>o.id == this.filter.class.id);
+                // xử lý nội bộ
+                if(data && data.data){
+                    var students = data.data.find(o=>o.id == id);
+                    if(students && students.data && students.data.length > 0){
+                        var complete = students.data.filter(o=>o.status == 1);
+                        if(complete && complete.length > 0){
+                            return complete.map(o=>o.point).reduce((a,b)=>a+b,0).toFixed(1);
+                        }
+                        else{
+                            return "---";
+                        }
+                    }
+                    return "---";
+
+                    // return data.pointAvg.toFixed(1);
+                }
+                else return "---";
+            }
+            if(this.filter.center){
+                if(data && data.data){
+                    // console.log(data);
+                    return data.pointAvg.toFixed(1);
+                }
+                else return "---";
+            }
+
             if(data && data.data){
                 return data.data.points.toFixed(1);
             }
             return "---";
         },
         totalTimeLink(id){
-            var data = this.DataLink.find(o=>o.regionid == id);
+            var data = this.DataLink.find(o=>o.id == id);
+
+            if(this.filter.class){
+                data = this.DataLink.find(o=>o.id == this.filter.class.id);
+                // xử lý nội bộ
+                if(data && data.data){
+                    var students = data.data.find(o=>o.id == id);
+                    if(students && students.data && students.data.length > 0){
+                        var complete = students.data.filter(o=>o.status == 1);
+                        if(complete && complete.length > 0){
+                            return complete.map(o=>o.time).reduce((a,b)=>a+b,0).toFixed(1);
+                        }
+                        else{
+                            return "---";
+                        }
+                    }
+                    return "---";
+
+                    // return data.pointAvg.toFixed(1);
+                }
+                else return "---";
+            }
+            if(this.filter.center){
+                if(data){
+                    return data.timeAvg.toFixed(1);
+                }
+                else return "---";
+            }
+
             if(data && data.data){
                 return data.data.times.toFixed(1);
             }
             return "---";
         },
         totalStudentLinkActive(id){
-            var data = this.DataLink.find(o=>o.regionid == id);
+            var data = this.DataLink.find(o=>o.id == id);
+
+            if(this.filter.class){
+                data = this.DataLink.find(o=>o.id == this.filter.class.id);
+                // xử lý nội bộ
+                if(data){
+                    return data.studentDo;
+                }
+                else return "---";
+            }
+            if(this.filter.center){
+                if(data){
+                    return data.studentDo;
+                }
+                else return "---";
+            }
+
             if(data && data.data){
                 return data.data.studentDo;
             }
             return "---";
         },
         totalStudentLink(id){
-            var data = this.DataLink.find(o=>o.regionid == id);
+            var data = this.DataLink.find(o=>o.id == id);
+            if(this.filter.class){
+                data = this.DataLink.find(o=>o.id == this.filter.class.id);
+            }
             if(data && data.data){
                 return data.totalStudents;
             }
             return "---";
         },
         totalLink(id){
-            var data = this.DataLink.find(o=>o.regionid == id);
+            var data = this.DataLink.find(o=>o.id == id);
+            if(this.filter.class){
+                data = this.DataLink.find(o=>o.id == this.filter.class.id);
+                // xử lý nội bộ
+                if(data){
+                    return data.totalLink;
+                }
+                else return 0;
+            }
+            if(this.filter.center){
+                if(data){
+                    return data.totalLink;
+                }
+                else return 0;
+            }
             if(data && data.data){
                 return data.data.totalLink;
             }
@@ -192,50 +315,74 @@ export default defineComponent({
             return array.indexOf(value) === index;
         },
         totalStudentActive(id,type,template){
-            console.log(type);
-            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0 && o.tyLeThamGia.length > 0);
-            if(data != null){
-                var studentKT = [];
-                var studentLT = [];
-                data.forEach(item=>{
-                    studentKT = [].concat(studentKT,item.studentDoKt)
-                    studentLT = [].concat(studentLT,item.studentDoLt)
-                })
-                if(template == 0) return studentKT.length;
-                if(template == 1) return studentLT.length;
-                return  [].concat(studentKT,studentLT).length;
+            if(this.filter.class){
+                type = 2;
+            }
+            else{
+                if(this.filter.center){
+                    type = 1;
+                }
+            }
+            var data = this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0 && o.tyLeThamGia.length > 0);
+            // console.log(data);
+            if(data != null && data.length > 0){
+                if(type == 1){
+                    data = data[0];
+                    // console.log(id,type,template,data);
+                    if(template == 0){
+                        return data.studentDoKT != null ? data.studentDoKT.length : 0;
+                    }
+                    if(template == 1){
+                        return data.studentDoLT != null ? data.studentDoLT.length : 0;
+                    }
+                    var total = [].concat(data.studentDoKT,data.studentDoLT);
+                    
+                    return total.filter(this.onlyUnique).length;
+                }
+                else{
+                    var studentKT = [];
+                    var studentLT = [];
+                    data.forEach(item=>{
+                        // console.log(item);
+                        studentKT = [].concat(studentKT,item.studentDoKT)
+                        studentLT = [].concat(studentLT,item.studentDoLT)
+                    })
+                    if(template == 0) return studentKT.length;
+                    if(template == 1) return studentLT.length;
+                    var total2 =[].concat([],studentKT,studentLT);
+
+                    // console.log(total2,total2.filter(this.onlyUnique));
+
+                    return  total2.filter(this.onlyUnique).length;
+                }
             }
             
             return 0;
         },
-        totalClassActive(id,type){
-            console.log(type);
-            var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
+        totalClassActive(id){
+            var data = this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
             if(data) return data.length
 
             return 0;
         },
-        totalSchool    (id,type){
-            console.log(type);
+        totalSchool    (id){
             var item = this.DataCountCenter.find(o=>o.id==id);
             if(item) return item.value;
             return 0;
         },
-        totalClass     (id,type){
-            console.log(type);
+        totalClass     (id){
             var item = this.DataCountClass.find(o=>o.id==id);
             if(item) return item.value;
             return 0;
         },
-        totalStudent   (id,type){
-            console.log(type);
+        totalStudent   (id){
+            // console.log(type);
             var item = this.DataCountStudents.find(o=>o.id==id);
             if(item) return item.value;
         },
         totalLesson(id,type,template){
             var data = this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
             if(data && data.length > 0){
-                
                 if(template == 0){
                     var kt = data.map(o=>o.totalKT).reduce((a,b)=>a+b,0);
                     return kt;
@@ -247,7 +394,6 @@ export default defineComponent({
                 var tt = data.map(o=>o.totalLesson).reduce((a,b)=>a+b,0);
                 return tt;
             }
-            console.log(id,type);
             return 0;
         },
         totalPoint(id,type,template){
@@ -259,11 +405,10 @@ export default defineComponent({
                 if(template == 1) return ltPoints;
                 return ktpoints+"/"+ltPoints;
             }
-            console.log("totalPoint",type);
             return "--/--";
         },
         totalTime(id,type,template){
-            console.log("totalTime",type);
+            // console.log("totalTime",type);
             var data =this.DataGiaoBai.filter(o=>o.parent == id && o.totalLesson > 0);
             if(data != null && data.length > 0){
                 var kt = (data.map(o=>o.ktTimes).reduce((a,b)=>a+b,0)/data.length).toFixed(1);
@@ -275,6 +420,8 @@ export default defineComponent({
             return 0;
         },
         applySearch(){
+            this.DataGiaoBai = [];
+            this.DataLink = [];
             this.CountData = 0;
             const that = this;
             that.PercentLoading = 0;
@@ -287,7 +434,9 @@ export default defineComponent({
                     this.loadBaiGiao(this.filter.class.id,o.id,3).then(res=>{
                         that.DataGiaoBai.push(res.data); that.PercentLoading++;
                     });
+                    // this.loadLinkWithCenter(o.id,this.filter.class.id,3);
                 })
+                that.loadLinkWithClass(this.filter.class.id,2);
             }
             else{
                 
@@ -297,10 +446,15 @@ export default defineComponent({
                     this.DataCountStudents = [];
                     that.DataShow = this.listClass;
                         const data = [].concat([],this.listClass);
+                        that.CountData = data.length;
                         data.forEach(o=>{
                             that.countStudents(o.id,2);
-                            that.loadLinkWithCenter(o.id);
+                            that.loadBaiGiao(o.id,o.id,2).then(res=>{
+                                that.DataGiaoBai.push(res.data); that.PercentLoading++;
+                            });
+                            that.loadLinkWithClass(o.id,2);
                         });
+                        
                 }
                 else{
                     if(this.filter.region)
@@ -315,7 +469,7 @@ export default defineComponent({
                         data.forEach(o=>{
                             that.countClass(o.id,1);
                             that.countStudents(o.id,1);
-                            that.loadLinkWithCenter(o.id);
+                            that.loadLinkWithClass(o.id,1);
                         });
                     }
                     else{
@@ -329,20 +483,16 @@ export default defineComponent({
                             Class:[],
                             Student:[]
                         }
-                        this.DataGiaoBai = [];
                         const data = [].concat([],this.regions);
                         data.forEach(o=>{
                             that.countCenters(o.id,0)
                             that.countClass(o.id,0)
                             that.countStudents(o.id,0)
-                            that.loadLinkWithClass(o.id);
+                            that.loadLinkWithClass(o.id,0);
                         });
                     }
                 }
             }
-        },
-        loadLinkWithCenter(centerid){
-            console.log(centerid);
         },
         loadRegions(){
             this.CountData++;
@@ -436,10 +586,10 @@ export default defineComponent({
                 return '<div>...</div>'
             }
         },
-        loadLinkWithClass : function(id){
+        loadLinkWithClass : function(id,type){
             this.CountData++;
             const that = this;
-            that.loadLink(id)
+            that.loadLink(id,type)
                 .then(res=>{ that.DataLink.push(res.data); this.PercentLoading++;})
                 .catch(err=>{console.log(err);})
         },
@@ -465,8 +615,8 @@ export default defineComponent({
         loadBaiGiao : function(classid,id,type){
             return Helper.GetBaiGiao(classid,id,type,this.start,this.end);
         },
-        loadLink : function(id){
-            return Helper.GetLink(id,this.start,this.end,this.filter.level);
+        loadLink : function(id,type){
+            return Helper.GetLink(id,type,this.start,this.end,this.filter.level);
         },
         countStudents : function(id,type){
             this.CountData++;

@@ -1,5 +1,5 @@
 const Configs = {
-    BaseUrl: 'https://localhost:7201/data/',
+    BaseUrl: '/data/',
     URL:{
         Student:'GetStudent',
         Region:'GetRegions',
